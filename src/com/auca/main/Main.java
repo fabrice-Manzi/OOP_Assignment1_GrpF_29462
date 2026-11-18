@@ -549,8 +549,8 @@ public class Main {
         requireUnique("ID", v[1], "Person ID");
         requireUnique("EMAIL", v[4], "Email");
         requireUnique("MEMBER", v[7], "Member number");
-        requireUnique("INSTEMAIL", v[11], "Institutional email");
-        requireUnique("STUDENTNO", v[13], "Student number");
+        requireUnique("Institutional EMAIL", v[11], "Institutional email");
+        requireUnique("STUDENT NO", v[13], "Student number");
         Student s = new Student(v[1], v[2], v[3], v[4], v[5], LocalDate.parse(v[6]),
                 v[7], (Department) r[8], LocalDate.parse(v[9]), v[10], v[11], v[12],
                 v[13], v[14], LocalDate.parse(v[15]), Integer.parseInt(v[16]), v[17], v[18].equals("YES"));
@@ -563,7 +563,7 @@ public class Main {
         requireUnique("ID", v[1], "Person ID");
         requireUnique("EMAIL", v[4], "Email");
         requireUnique("MEMBER", v[7], "Member number");
-        requireUnique("INSTEMAIL", v[11], "Institutional email");
+        requireUnique("Institutional EMAIL", v[11], "Institutional email");
         requireUnique("EMPNO", v[13], "Employee number");
         Teacher t = new Teacher(v[1], v[2], v[3], v[4], v[5], LocalDate.parse(v[6]),
                 v[7], (Department) r[8], LocalDate.parse(v[9]), v[10], v[11], v[12],
@@ -576,7 +576,7 @@ public class Main {
     private static Identifiable saveAdministrator(String[] v) throws ValidationException, DuplicateRecordException {
         requireUnique("ID", v[1], "Person ID");
         requireUnique("EMAIL", v[4], "Email");
-        requireUnique("STAFFNO", v[7], "Staff number");
+        requireUnique("STAFF NO", v[7], "Staff number");
         Administrator a = new Administrator(v[1], v[2], v[3], v[4], v[5], LocalDate.parse(v[6]),
                 v[7], v[8], v[9], LocalDate.parse(v[10]), Integer.parseInt(v[11]), v[12].equals("YES"));
         a.validate();
