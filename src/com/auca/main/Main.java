@@ -44,7 +44,7 @@ public class Main {
     private static final ArrayList<LibraryBook> books = new ArrayList<>();
     private static final ArrayList<BookLoan> loans = new ArrayList<>();
 
-     static void main(String[] args) {
+     static void main() {
         boolean running = true;
         while (running) {
             printMainMenu();
@@ -171,7 +171,7 @@ public class Main {
     private static void printStepHeader(int type, int step) {
         System.out.println();
         System.out.println(LINE);
-        box("AUCA_ID / SCHOOL MANAGEMENT");
+        box("AUCA_29462 / SCHOOL MANAGEMENT");
         box(String.format("%-40s Step %d of 4", TITLES[type] + " REGISTRATION", step));
         System.out.println(LINE);
         box("[STEP " + step + "/4] " + STEP_NAMES[type][step - 1].toUpperCase());
@@ -193,7 +193,7 @@ public class Main {
                 section++;
                 System.out.println("| -- " + STEP_NAMES[type][section].toUpperCase() + " --");
             }
-            System.out.println(String.format("| %02d %-22s: %s", n, NAMES[type][n], v[n]));
+            System.out.printf("| %02d %-22s: %s%n", n, NAMES[type][n], v[n]);
         }
         System.out.println(LINE);
         System.out.println("| [1] Save   [2] Edit field   [0] Cancel");
@@ -204,22 +204,21 @@ public class Main {
         while (true) {
             printReview(type, v);
             String c = readRaw("Select option: ");
-            if (c.equals("1")) {
-                try {
-                    Identifiable saved = save(type, v, r);
-                    System.out.println("\n+ " + TITLES[type] + " " + saved.getId() + " registered successfully.");
-                    System.out.println("  " + ((Registrable) saved).getRegistrationSummary());
-                    return saved;
-                } catch (ValidationException | DuplicateRecordException | BookUnavailableException e) {
-                    System.out.println("! Could not save: " + e.getMessage());
-                    System.out.println("  Use [2] Edit field to correct it, or [0] to cancel.");
+            switch (c) {
+                case "1" -> {
+                    try {
+                        Identifiable saved = save(type, v, r);
+                        System.out.println("\n+ " + TITLES[type] + " " + saved.getId() + " registered successfully.");
+                        System.out.println("  " + ((Registrable) saved).getRegistrationSummary());
+                        return saved;
+                    } catch (ValidationException | DuplicateRecordException | BookUnavailableException e) {
+                        System.out.println("! Could not save: " + e.getMessage());
+                        System.out.println("  Use [2] Edit field to correct it, or [0] to cancel.");
+                    }
                 }
-            } else if (c.equals("2")) {
-                editField(type, v, r);
-            } else if (c.equals("0")) {
-                throw new CancelException();
-            } else {
-                System.out.println("! Choose 1, 2 or 0.");
+                case "2" -> editField(type, v, r);
+                case "0" -> throw new CancelException();
+                default -> System.out.println("! Choose 1, 2 or 0.");
             }
         }
     }
@@ -387,7 +386,7 @@ public class Main {
             case 8 -> pick(type, 8, DEPARTMENT, false, v, r);
             case 9 -> v[9] = askDate(name, v[9], NOT_FUTURE, null);
             case 10 -> v[10] = askChoice(name, v[10], AcademicMember.allowedStatuses());
-            case 11 -> v[11] = askEmail(name, v[11], "INSTEMAIL");
+            case 11 -> v[11] = askEmail(name, v[11], "Institutional EMAIL");
             case 12 -> v[12] = askText(name, "String | " + MIN_ID + "-" + MAX_ID + " chars", v[12], MIN_ID, MAX_ID, null);
         }
     }
@@ -395,7 +394,7 @@ public class Main {
     private static void askStudentField(int n, String[] v) {
         String name = fieldName(STUDENT, n);
         switch (n) {
-            case 13 -> v[13] = askText(name, ID_HINT, v[13], MIN_ID, MAX_ID, "STUDENTNO");
+            case 13 -> v[13] = askText(name, ID_HINT, v[13], MIN_ID, MAX_ID, "STUDENT NO");
             case 14 -> v[14] = askText(name, NAME_HINT, v[14], MIN_NAME, MAX_NAME, null);
             case 15 -> v[15] = askDate(name, v[15], NOT_FUTURE, null);
             case 16 -> v[16] = askInt(name, v[16], 1, Student.maxStudyYear());
@@ -420,7 +419,7 @@ public class Main {
     private static void askAdminField(int n, String[] v) {
         String name = fieldName(ADMIN, n);
         switch (n) {
-            case 7 -> v[7] = askText(name, ID_HINT, v[7], MIN_ID, MAX_ID, "STAFFNO");
+            case 7 -> v[7] = askText(name, ID_HINT, v[7], MIN_ID, MAX_ID, "STAFF NO");
             case 8 -> v[8] = askText(name, "String | " + MIN_NAME + "-100 chars", v[8], MIN_NAME, 100, null);
             case 9 -> v[9] = askText(name, "String | 1-60 chars", v[9], 1, 60, null);
             case 10 -> v[10] = askDate(name, v[10], NOT_FUTURE, null);
@@ -433,7 +432,7 @@ public class Main {
         String name = fieldName(COURSE, n);
         switch (n) {
             case 1 -> v[1] = askText(name, ID_HINT, v[1], MIN_ID, MAX_ID, "ID");
-            case 2 -> v[2] = askText(name, "String | unique | 2-10 chars", v[2], 2, 10, "COURSECODE");
+            case 2 -> v[2] = askText(name, "String | unique | 2-10 chars", v[2], 2, 10, "COURSE CODE");
             case 3 -> v[3] = askText(name, "String | " + MIN_ID + "-" + MAX_ID + " chars", v[3], MIN_ID, MAX_ID, null);
             case 4 -> v[4] = askInt(name, v[4], 1, Course.maxCredit());
             case 5 -> pick(COURSE, 5, DEPARTMENT, false, v, r);
@@ -471,10 +470,10 @@ public class Main {
             case 1 -> v[1] = askText(name, ID_HINT, v[1], MIN_ID, MAX_ID, "ID");
             case 2 -> pick(ASSESSMENT, 2, ENROLLMENT, true, v, r);
             case 3 -> v[3] = askChoice(name, v[3], Assessment.allowedAssessmentTypes());
-            case 4 -> v[4] = askDouble(name, v[4], "double | greater than 0", 0, Double.MAX_VALUE, true);
+            case 4 -> v[4] = askDouble(name, v[4], "double | greater than 0", Double.MAX_VALUE, true);
             case 5 -> {
                 double max = Double.parseDouble(v[4]);
-                v[5] = askDouble(name, v[5], "double | 0 to " + v[4], 0, max, false);
+                v[5] = askDouble(name, v[5], "double | 0 to " + v[4], max, false);
             }
             case 6 -> v[6] = askDate(name, v[6], NOT_FUTURE, null);
         }
@@ -586,7 +585,7 @@ public class Main {
 
     private static Identifiable saveCourse(String[] v, Object[] r) throws ValidationException, DuplicateRecordException {
         requireUnique("ID", v[1], "Course ID");
-        requireUnique("COURSECODE", v[2], "Course code");
+        requireUnique("COURSE CODE", v[2], "Course code");
         Course c = new Course(v[1], v[2], v[3], Integer.parseInt(v[4]), (Department) r[5], (Teacher) r[6]);
         c.validate();
         courses.add(c);
@@ -672,7 +671,7 @@ public class Main {
             }
         }
         System.out.println("\n----------- RETURN LIBRARY BOOK -----------");
-        Identifiable chosen = chooseFrom(active, "No book is currently on loan. Borrow a book first (menu 11).");
+        Identifiable chosen = chooseFrom(active, "No book is currently borrowed. Borrow a book first (menu 11).");
         if (chosen == null) {
             return;
         }
@@ -719,7 +718,7 @@ public class Main {
     private static void viewAllRecords() {
         for (int kind = DEPARTMENT; kind <= LOAN; kind++) {
             ArrayList<Identifiable> list = listFor(kind, false);
-            System.out.println("\n######## " + TITLES[kind] + " (" + list.size() + ") ########");
+            System.out.println("\n============ " + TITLES[kind] + " (" + list.size() + ") ================");
             if (list.isEmpty()) {
                 System.out.println("  (no records)");
             }
@@ -1084,7 +1083,7 @@ public class Main {
             System.out.println("No change made.");
         } else if (c == 1) {
             String x = askDouble("Obtained score", String.valueOf(a.getObtainedScore()),
-                    "double | 0 to " + a.getMaximumScore(), 0, a.getMaximumScore(), false);
+                    "double | 0 to " + a.getMaximumScore(), a.getMaximumScore(), false);
             if (confirmChange("obtained score", x)) a.setObtainedScore(Double.parseDouble(x));
         } else {
             System.out.println("! Invalid field.");
@@ -1147,8 +1146,8 @@ public class Main {
             System.out.println(" (this student has no enrollments yet)");
         }
         if (count > 0) {
-            System.out.println(String.format("Average assessment score: %.1f%% over %d assessment(s)",
-                    totalPercent / count, count));
+            System.out.printf("Average assessment score: %.1f%% over %d assessment(s)%n",
+                    totalPercent / count, count);
         }
         System.out.println();
         pause();
@@ -1376,12 +1375,12 @@ public class Main {
         }
     }
 
-    private static String askDouble(String name, String current, String hint, double min, double max, boolean minExclusive) {
+    private static String askDouble(String name, String current, String hint, double max, boolean minExclusive) {
         while (true) {
             String in = ask(name + " [" + hint + "]", current);
             try {
                 double n = Double.parseDouble(in);
-                if (Double.isNaN(n) || Double.isInfinite(n) || n < min || n > max || (minExclusive && n == min)) {
+                if (Double.isNaN(n) || Double.isInfinite(n) || n < (double) 0 || n > max || (minExclusive && n == (double) 0)) {
                     throw new ValidationException(name + " is out of range (" + hint + ")");
                 }
                 return String.valueOf(n);
@@ -1492,19 +1491,19 @@ public class Main {
         }
         for (Student s : students) {
             if (kind.equals("MEMBER") && s.getMemberNumber().equalsIgnoreCase(value)) return true;
-            if (kind.equals("INSTEMAIL") && s.getInstitutionalEmail().equalsIgnoreCase(value)) return true;
-            if (kind.equals("STUDENTNO") && s.getStudentNumber().equalsIgnoreCase(value)) return true;
+            if (kind.equals("Institutional EMAIL") && s.getInstitutionalEmail().equalsIgnoreCase(value)) return true;
+            if (kind.equals("STUDENT NO") && s.getStudentNumber().equalsIgnoreCase(value)) return true;
         }
         for (Teacher t : teachers) {
             if (kind.equals("MEMBER") && t.getMemberNumber().equalsIgnoreCase(value)) return true;
-            if (kind.equals("INSTEMAIL") && t.getInstitutionalEmail().equalsIgnoreCase(value)) return true;
+            if (kind.equals("Institutional EMAIL") && t.getInstitutionalEmail().equalsIgnoreCase(value)) return true;
             if (kind.equals("EMPNO") && t.getEmployeeNumber().equalsIgnoreCase(value)) return true;
         }
         for (Administrator a : administrators) {
-            if (kind.equals("STAFFNO") && a.getStaffNumber().equalsIgnoreCase(value)) return true;
+            if (kind.equals("STAFF NO") && a.getStaffNumber().equalsIgnoreCase(value)) return true;
         }
         for (Course c : courses) {
-            if (kind.equals("COURSECODE") && c.getCourseCode().equalsIgnoreCase(value)) return true;
+            if (kind.equals("COURSE CODE") && c.getCourseCode().equalsIgnoreCase(value)) return true;
         }
         for (FeePayment p : payments) {
             if (kind.equals("RECEIPT") && p.getReceiptNumber().equalsIgnoreCase(value)) return true;
